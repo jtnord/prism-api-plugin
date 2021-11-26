@@ -1,0 +1,32 @@
+:tip-caption: :bulb:
+
+= Prism Jenkins Plugin
+
+image:https://ci.jenkins.io/job/Plugins/job/prism-api-plugin/job/master/badge/icon?subject=Jenkins%20CI[Jenkins, link=https://ci.jenkins.io/job/Plugins/job/prism-api-plugin/job/master/]
+image:https://github.com/jenkinsci/prism-api-plugin/workflows/GitHub%20CI/badge.svg?branch=master[GitHub Actions, link=https://github.com/jenkinsci/prism-api-plugin/actions]
+
+Provides https://prismjs.com/[Prism] for Jenkins Plugins. Prism is a lightweight, extensible syntax highlighter,
+built with modern web standards in mind. It’s used in millions of websites, including some of those you
+visit daily.
+
+== How to use the plugin
+
+In order to use this JS library, add a maven dependency to your pom:
+
+[source,xml]
+----
+<dependency>
+  <groupId>io.jenkins.plugins</groupId>
+  <artifactId>prism-api</artifactId>
+  <version>[latest version]</version>
+</dependency>
+----
+
+Then you can use Prism in your jelly files using the following snippet:
+
+[source,xml]
+----
+<st:adjunct includes="io.jenkins.plugins.prism"/>
+----
+
+

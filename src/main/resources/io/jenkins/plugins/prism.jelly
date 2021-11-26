@@ -1,0 +1,14 @@
+<?jelly escape-by-default='true'?>
+<!--
+Use it like <st:adjunct includes="io.jenkins.plugins.prism"/>
+-->
+<j:jelly xmlns:j="jelly:core">
+
+  <j:new var="h" className="hudson.Functions" />
+  ${h.initPageVariables(context)}
+
+  <link type="text/css" rel="stylesheet" href="${resURL}/plugin/prism-api/css/prism.css"/>
+
+  <script type="text/javascript" src="${resURL}/plugin/prism-api/js/prism-core.min.js"/>
+  <script type="text/javascript" src="${resURL}/plugin/prism-api/js/autoloader/prism-autoloader.min.js"/>
+</j:jelly>
