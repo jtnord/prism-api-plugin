@@ -29,4 +29,11 @@ Then you can use Prism in your jelly files using the following snippet:
 <st:adjunct includes="io.jenkins.plugins.prism"/>
 ----
 
+== Examples
+
+Currently, no additional help is available for this plugin. You can have a look into the
+https://github.com/jenkinsci/warnings-ng-plugin[warnings plugin] that
+has a source code renderer that uses Prism to highlight the source code that contains warnings
+(see https://github.com/jenkinsci/warnings-ng-plugin/blob/master/plugin/src/main/java/io/jenkins/plugins/analysis/core/model/SourceDetail.java[class SourceDetail]).
+
 
