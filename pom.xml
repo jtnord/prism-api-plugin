@@ -22,6 +22,12 @@
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.popper</module.name>
+
+    <plugin-util-api.version>2.6.0</plugin-util-api.version>
+    <antisamy-markup-formatter.version>2.5</antisamy-markup-formatter.version>
+    <j2html.version>1.4.0</j2html.version>
+    <jsoup.version>1.14.3</jsoup.version>
+
   </properties>
 
   <licenses>
@@ -38,6 +44,42 @@
       <email>ullrich.hafner@gmail.com</email>
     </developer>
   </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>font-awesome-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>antisamy-markup-formatter</artifactId>
+      <version>${antisamy-markup-formatter.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.j2html</groupId>
+      <artifactId>j2html</artifactId>
+      <version>${j2html.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+  </dependencies>
 
   <build>
     <plugins>
