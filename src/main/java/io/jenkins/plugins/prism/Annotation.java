@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class Annotation {
     private final String title;
     private final String icon;
@@ -18,9 +19,8 @@ public class Annotation {
     private final int columnStart;
     private final int columnEnd;
 
-    Annotation(final String title, final String icon, final String description, final int lineStart,
-            final int lineEnd, final int columnStart,
-            final int columnEnd) {
+    Annotation(final String title, final String icon, final String description,
+            final int lineStart, final int lineEnd, final int columnStart, final int columnEnd) {
         this.title = title;
         this.icon = icon;
         this.description = description;

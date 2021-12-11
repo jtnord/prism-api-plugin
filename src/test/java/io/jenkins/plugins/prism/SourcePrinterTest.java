@@ -1,6 +1,5 @@
 package io.jenkins.plugins.prism;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -23,10 +22,8 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class SourcePrinterTest extends ResourceTest {
-    private static final String ICON_URL = "/path/to/icon.png";
     private static final String MESSAGE = "Hello Message";
     private static final String DESCRIPTION = "Hello Description";
-    private static final String NO_DESCRIPTION = StringUtils.EMPTY;
     private static final String FILE_NAME = "filename.txt";
 
     @Test

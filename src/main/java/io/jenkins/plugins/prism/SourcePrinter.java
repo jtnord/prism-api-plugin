@@ -198,13 +198,17 @@ public class SourcePrinter {
     }
 
     private String asMarkedCode(final StringBuilder text, final Annotation annotation, final String... classes) {
-        final StringBuilder marked = (annotation.getLineStart() == annotation.getLineEnd())
-                ? COLUMN_MARKER.markColumns(text.toString(), annotation.getColumnStart(), annotation.getColumnEnd())
-                : text;
-        final String sanitized = SANITIZER.render(StringEscapeUtils.escapeHtml4(marked.toString()));
-        final String markerReplaced = COLUMN_MARKER.replacePlaceHolderWithHtmlTag(sanitized);
-        final UnescapedText unescapedText = new UnescapedText(markerReplaced);
-        return code().withClasses(classes).with(unescapedText).render();
+        StringBuilder marked;
+        if (annotation.getLineStart() == annotation.getLineEnd()) {
+            marked = COLUMN_MARKER.markColumns(text.toString(), annotation.getColumnStart(), annotation.getColumnEnd());
+        }
+        else {
+            marked = text;
+        }
+
+        String sanitized = SANITIZER.render(StringEscapeUtils.escapeHtml4(marked.toString()));
+        String  markerReplaced = COLUMN_MARKER.replacePlaceHolderWithHtmlTag(sanitized);
+        return code().withClasses(classes).with(new UnescapedText(markerReplaced)).render();
     }
 
     private String asCode(final StringBuilder text, final String... classes) {
