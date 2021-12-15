@@ -1,0 +1,22 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+  <f:section title="${%Prism Syntax Highlighting Configuration}">
+    <f:entry title="${%sourceDirectories.title}" description="${%sourceDirectories.description}">
+      <div id="sourceDirectories">
+        <f:repeatableProperty field="sourceDirectories">
+          <f:entry title="">
+            <div align="right">
+              <f:repeatableDeleteButton/>
+            </div>
+          </f:entry>
+        </f:repeatableProperty>
+      </div>
+    </f:entry>
+    <f:entry title="${%Theme}" field="theme">
+      <f:select default="PRISM"/>
+    </f:entry>
+
+  </f:section>
+
+</j:jelly>

@@ -34,7 +34,6 @@ public class SourceDetail implements ModelObject {
      */
     public SourceDetail(final Run<?, ?> owner, final String fileName, final Reader sourceCodeReader, final Annotation annotation) {
         this.owner = owner;
-
         this.fileName = fileName;
         sourceCode = render(sourceCodeReader, annotation);
     }
@@ -70,6 +69,15 @@ public class SourceDetail implements ModelObject {
      */
     public String getSourceCode() {
         return sourceCode;
+    }
+
+    /**
+     * Returns the filename of the prism theme. Themes are stored in the package below the css folder.
+     *
+     * @return the theme CSS file
+     */
+    public String getThemeCssFileName() {
+        return PrismConfiguration.getInstance().getTheme().getFileName();
     }
 }
 
