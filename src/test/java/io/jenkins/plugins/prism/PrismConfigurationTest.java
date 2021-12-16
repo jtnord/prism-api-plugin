@@ -30,8 +30,8 @@ class PrismConfigurationTest {
 
     private static final String NORMALIZED = PATH_UTIL.getAbsolutePath("/workspace");
 
-    private static final List<SourceDirectory> SOURCE_ROOTS
-            = Arrays.asList(new SourceDirectory(FIRST), new SourceDirectory(SECOND));
+    private static final List<SourceCodeDirectory> SOURCE_ROOTS
+            = Arrays.asList(new SourceCodeDirectory(FIRST), new SourceCodeDirectory(SECOND));
 
     @Test
     void shouldHaveNoRootFoldersWhenCreated() {
@@ -68,7 +68,7 @@ class PrismConfigurationTest {
         PrismConfiguration configuration = createConfiguration();
 
         configuration.setSourceDirectories(
-                Arrays.asList(new SourceDirectory("/absolute/unix"), new SourceDirectory("C:\\absolute\\windows")));
+                Arrays.asList(new SourceCodeDirectory("/absolute/unix"), new SourceCodeDirectory("C:\\absolute\\windows")));
 
         String relativeUnix = "relative/unix";
         String relativeWindows = "relative\\windows";

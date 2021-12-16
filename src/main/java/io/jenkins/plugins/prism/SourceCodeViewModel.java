@@ -10,12 +10,13 @@ import hudson.model.ModelObject;
 import hudson.model.Run;
 
 /**
- * Renders a source file containing an issue for the whole file or a specific line number.
+ * Renders a source code file with Prism syntax highlighting in a separate Jenkins view. Optionally, highlights a marker
+ * in the source code: either a line, some characters in a line, or a multi-line block.
  *
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class SourceDetail implements ModelObject {
+public class SourceCodeViewModel implements ModelObject {
     private final Run<?, ?> owner;
     private final String fileName;
     private final String sourceCode;
@@ -30,9 +31,10 @@ public class SourceDetail implements ModelObject {
      * @param sourceCodeReader
      *         the source code file to show, provided by a {@link Reader} instance
      * @param marker
-     *         an annotation to show in the source code view
+     *         a block of lines (or a part of a line) to mark in the source code view
      */
-    public SourceDetail(final Run<?, ?> owner, final String fileName, final Reader sourceCodeReader, final Marker marker) {
+    public SourceCodeViewModel(final Run<?, ?> owner, final String fileName, final Reader sourceCodeReader,
+            final Marker marker) {
         this.owner = owner;
         this.fileName = fileName;
         sourceCode = render(sourceCodeReader, marker);

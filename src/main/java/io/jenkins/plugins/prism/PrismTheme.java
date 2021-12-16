@@ -3,7 +3,7 @@ package io.jenkins.plugins.prism;
 import hudson.util.ListBoxModel;
 
 /**
- * Defines the active theme to be used when rendering the source code with prism.
+ * Defines the active theme to be used when rendering the source code with Prism.
  *
  * @author Ullrich Hafner
  */

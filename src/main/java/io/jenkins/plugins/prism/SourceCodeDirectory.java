@@ -12,23 +12,23 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
 /**
- * Directory that contains the source files that have issues.
+ * Approved directory that contains source code files that can be shown in Jenkins´ user interface.
  *
  * @author Ullrich Hafner
  */
-public class SourceDirectory extends AbstractDescribableImpl<SourceDirectory> implements Serializable {
+public class SourceCodeDirectory extends AbstractDescribableImpl<SourceCodeDirectory> implements Serializable {
     private static final long serialVersionUID = -3864564528382064924L;
 
     private final String path;
 
     /**
-     * Creates a new instance of {@link SourceDirectory}.
+     * Creates a new instance of {@link SourceCodeDirectory}.
      *
      * @param path
-     *         the name of the folder
+     *         the name of the directory
      */
     @DataBoundConstructor
-    public SourceDirectory(final String path) {
+    public SourceCodeDirectory(final String path) {
         super();
 
         this.path = path;
@@ -39,12 +39,12 @@ public class SourceDirectory extends AbstractDescribableImpl<SourceDirectory> im
     }
 
     /**
-     * Descriptor to validate {@link SourceDirectory}.
+     * Descriptor to validate {@link SourceCodeDirectory}.
      *
      * @author Ullrich Hafner
      */
     @Extension
-    public static class DescriptorImpl extends Descriptor<SourceDirectory> {
+    public static class DescriptorImpl extends Descriptor<SourceCodeDirectory> {
         @NonNull
         @Override
         public String getDisplayName() {

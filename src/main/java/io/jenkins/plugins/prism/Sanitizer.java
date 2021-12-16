@@ -12,7 +12,8 @@ import hudson.markup.MarkupFormatter;
 import hudson.markup.RawHtmlMarkupFormatter;
 
 /**
- * Sanitizes a piece of unsafe HTML code so that it can be rendered in a UI view.
+ * Sanitizes a piece of unsafe HTML code so that it can be rendered in a UI view. This class serves as simple
+ * wrapper for Jenkins´ {@link RawHtmlMarkupFormatter}.
  *
  * @author Ullrich Hafner
  */

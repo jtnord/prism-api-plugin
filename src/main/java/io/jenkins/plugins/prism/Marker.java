@@ -3,8 +3,8 @@ package io.jenkins.plugins.prism;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Marks a line, some characters in a line, or a multi-line block in the source code. A marker can optionally provide
- * a message, description, and icon to provide the reason in more detail.
+ * Marks a line, some characters in a line, or a multi-line block in the source code. A marker can optionally be
+ * enriched with a message, description, and icon.
  *
  * @author Ullrich Hafner
  */

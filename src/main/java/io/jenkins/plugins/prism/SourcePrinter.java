@@ -23,7 +23,7 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.GodClass")
-public class SourcePrinter {
+class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
 
     private static final ColumnMarker COLUMN_MARKER = new ColumnMarker("-n/a-");
@@ -35,7 +35,7 @@ public class SourcePrinter {
     /**
      * Creates a new instance of {@link SourcePrinter}.
      */
-    public SourcePrinter() {
+    SourcePrinter() {
         this(new JenkinsFacade());
     }
 

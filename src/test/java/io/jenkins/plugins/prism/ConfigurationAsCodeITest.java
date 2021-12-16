@@ -23,8 +23,8 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
     public void shouldImportSourceDirectoriesFromYaml() {
         configureJenkins("sourceDirectories.yaml");
 
-        List<SourceDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
-        assertThat(folders.stream().map(SourceDirectory::getPath))
+        List<SourceCodeDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
+        assertThat(folders.stream().map(SourceCodeDirectory::getPath))
                 .hasSize(2)
                 .containsExactlyInAnyOrder("C:\\Windows", "/absolute");
     }

@@ -50,7 +50,7 @@ import io.jenkins.plugins.util.GlobalConfigurationItem;
 public class PrismConfiguration extends GlobalConfigurationItem {
     private static final PathUtil PATH_UTIL = new PathUtil();
 
-    private List<SourceDirectory> sourceDirectories = Collections.emptyList();
+    private List<SourceCodeDirectory> sourceDirectories = Collections.emptyList();
     private Set<String> normalizedSourceDirectories = Collections.emptySet();
     private PrismTheme theme = PrismTheme.PRISM;
 
@@ -90,7 +90,7 @@ public class PrismConfiguration extends GlobalConfigurationItem {
      *
      * @return the source root folders
      */
-    public List<SourceDirectory> getSourceDirectories() {
+    public List<SourceCodeDirectory> getSourceDirectories() {
         return sourceDirectories;
     }
 
@@ -101,11 +101,11 @@ public class PrismConfiguration extends GlobalConfigurationItem {
      *         the source directories that contain the affected files
      */
     @DataBoundSetter
-    public void setSourceDirectories(final List<SourceDirectory> sourceDirectories) {
+    public void setSourceDirectories(final List<SourceCodeDirectory> sourceDirectories) {
         this.sourceDirectories = new ArrayList<>(sourceDirectories);
 
         normalizedSourceDirectories = sourceDirectories.stream()
-                .map(SourceDirectory::getPath)
+                .map(SourceCodeDirectory::getPath)
                 .map(PATH_UTIL::getAbsolutePath)
                 .collect(Collectors.toSet());
 
