@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import j2html.tags.DomContent;
 
 import hudson.markup.MarkupFormatter;
@@ -16,7 +18,12 @@ import hudson.markup.RawHtmlMarkupFormatter;
  */
 public class Sanitizer {
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
-    private final MarkupFormatter formatter = new RawHtmlMarkupFormatter(true);
+    private MarkupFormatter formatter = new RawHtmlMarkupFormatter(true);
+
+    @VisibleForTesting
+    void setMarkupFormatter(final MarkupFormatter markupFormatter) {
+        formatter = markupFormatter;
+    }
 
     /**
      * Renders the specified HTML code. Removes unsafe HTML constructs.
@@ -30,8 +37,8 @@ public class Sanitizer {
         try {
             return formatter.translate(html);
         }
-        catch (IOException e) {
-            return ExceptionUtils.getRootCauseMessage(e);
+        catch (IOException exception) {
+            return ExceptionUtils.getRootCauseMessage(exception);
         }
     }
 

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.util.ResourceTest;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import io.jenkins.plugins.prism.Annotation.AnnotationBuilder;
+import io.jenkins.plugins.prism.Marker.MarkerBuilder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static org.assertj.core.api.Assertions.*;
@@ -28,10 +28,10 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldCreateSourceWithoutLineNumber() {
-        AnnotationBuilder builder = new AnnotationBuilder();
+        MarkerBuilder builder = new MarkerBuilder();
         SourcePrinter printer = new SourcePrinter();
 
-        Annotation issue = builder.build();
+        Marker issue = builder.build();
 
         Document document = Jsoup.parse(printer.render(FILE_NAME, asStream("format-java.txt"), issue));
         String expectedFile = toString("format-java.txt");
@@ -44,8 +44,8 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldCreateSourceWithLineNumber() {
-        AnnotationBuilder builder = new AnnotationBuilder();
-        Annotation issue = builder.withLineStart(7).withTitle(MESSAGE).withDescription(DESCRIPTION).build();
+        MarkerBuilder builder = new MarkerBuilder();
+        Marker issue = builder.withLineStart(7).withTitle(MESSAGE).withDescription(DESCRIPTION).build();
 
         SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
 
@@ -66,8 +66,8 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldCreateSourceWithoutDescription() {
-        AnnotationBuilder builder = new AnnotationBuilder();
-        Annotation issue = builder.withLineStart(7).withTitle("Hello Message").build();
+        MarkerBuilder builder = new MarkerBuilder();
+        Marker issue = builder.withLineStart(7).withTitle("Hello Message").build();
 
         SourcePrinter printer = new SourcePrinter();
 
@@ -82,9 +82,23 @@ class SourcePrinterTest extends ResourceTest {
     }
 
     @Test
+    void shouldCreateIcon() {
+        MarkerBuilder builder = new MarkerBuilder();
+        Marker issue = builder.withLineStart(7).withTitle("Hello Message").withIcon("icon").build();
+
+        SourcePrinter printer = new SourcePrinter();
+
+        Document document = Jsoup.parse(printer.render(FILE_NAME, asStream("format-java.txt"), issue));
+
+        assertThatCodeIsEqualToSourceText(document);
+
+        assertThat(document.getElementsByClass("analysis-title").html()).contains("<td><img src=\"icon\"></td>");
+    }
+
+    @Test
     void shouldFilterTagsInCode() {
-        AnnotationBuilder builder = new AnnotationBuilder();
-        Annotation issue = builder.withLineStart(2).build();
+        MarkerBuilder builder = new MarkerBuilder();
+        Marker issue = builder.withLineStart(2).build();
 
         SourcePrinter printer = new SourcePrinter();
 
@@ -98,9 +112,9 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldFilterTagsInMessageAndDescription() {
-        AnnotationBuilder builder = new AnnotationBuilder();
+        MarkerBuilder builder = new MarkerBuilder();
 
-        Annotation issue = builder.withLineStart(7)
+        Marker issue = builder.withLineStart(7)
                 .withTitle("Hello <b>Message</b> <script>execute</script>")
                 .withDescription("Hello <b>Description</b> <script>execute</script>")
                 .build();
@@ -119,9 +133,9 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldMarkTheCodeBetweenColumnStartAndColumnEnd() {
-        AnnotationBuilder builder = new AnnotationBuilder();
+        MarkerBuilder builder = new MarkerBuilder();
 
-        Annotation issue = builder.withLineStart(5)
+        Marker issue = builder.withLineStart(5)
                 .withColumnStart(11)
                 .withColumnEnd(25)
                 .withDescription("Hello <b>Description</b> <script>execute</script>")
@@ -143,8 +157,8 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldNotMarkTheCodeIfStartLineAndEndLineAreDifferent() {
-        AnnotationBuilder builder = new AnnotationBuilder();
-        Annotation issue = builder.withLineStart(5)
+        MarkerBuilder builder = new MarkerBuilder();
+        Marker issue = builder.withLineStart(5)
                 .withColumnStart(11)
                 .withColumnEnd(25)
                 .withLineStart(2)
@@ -174,9 +188,9 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldAddBreakOnNewLine() {
-        AnnotationBuilder builder = new AnnotationBuilder();
+        MarkerBuilder builder = new MarkerBuilder();
 
-        Annotation issue = builder.withLineStart(7).withTitle("Hello <b>MessageLine1\nLine2\nLine3</b>").build();
+        Marker issue = builder.withLineStart(7).withTitle("Hello <b>MessageLine1\nLine2\nLine3</b>").build();
 
         SourcePrinter printer = new SourcePrinter();
 
@@ -193,10 +207,10 @@ class SourcePrinterTest extends ResourceTest {
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-55679")
     void shouldRenderXmlFiles() {
-        AnnotationBuilder builder = new AnnotationBuilder();
+        MarkerBuilder builder = new MarkerBuilder();
         SourcePrinter printer = new SourcePrinter();
 
-        Annotation issue = builder.build();
+        Marker issue = builder.build();
 
         Document document = Jsoup.parse(printer.render(FILE_NAME, asStream("format.xml"), issue));
         String expectedFile = toString("format.xml");

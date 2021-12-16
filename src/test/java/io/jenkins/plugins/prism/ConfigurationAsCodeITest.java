@@ -17,16 +17,26 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     /**
-     * Reads the YAML file with permitted source code directories and verifies that the directories have been loaded.
+     * Reads a YAML file with permitted source code directories and verifies that the directories have been loaded.
      */
     @Test
     public void shouldImportSourceDirectoriesFromYaml() {
         configureJenkins("sourceDirectories.yaml");
 
-        List<SourceDirectory> parsers = PrismConfiguration.getInstance().getSourceDirectories();
-        assertThat(parsers.stream().map(SourceDirectory::getPath))
+        List<SourceDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
+        assertThat(folders.stream().map(SourceDirectory::getPath))
                 .hasSize(2)
                 .containsExactlyInAnyOrder("C:\\Windows", "/absolute");
+    }
+
+    /**
+     * Reads a YAML file with the active theme.
+     */
+    @Test
+    public void shouldImportTheme() {
+        configureJenkins("theme.yaml");
+
+        assertThat(PrismConfiguration.getInstance().getTheme()).isEqualTo(PrismTheme.DARK);
     }
 
     private void configureJenkins(final String fileName) {

@@ -29,19 +29,19 @@ public class SourceDetail implements ModelObject {
      *         the file name of the shown content
      * @param sourceCodeReader
      *         the source code file to show, provided by a {@link Reader} instance
-     * @param annotation
+     * @param marker
      *         an annotation to show in the source code view
      */
-    public SourceDetail(final Run<?, ?> owner, final String fileName, final Reader sourceCodeReader, final Annotation annotation) {
+    public SourceDetail(final Run<?, ?> owner, final String fileName, final Reader sourceCodeReader, final Marker marker) {
         this.owner = owner;
         this.fileName = fileName;
-        sourceCode = render(sourceCodeReader, annotation);
+        sourceCode = render(sourceCodeReader, marker);
     }
 
-    private String render(final Reader affectedFile, final Annotation annotation) {
+    private String render(final Reader affectedFile, final Marker marker) {
         try (BufferedReader reader = new BufferedReader(affectedFile)) {
             SourcePrinter sourcePrinter = new SourcePrinter();
-            return sourcePrinter.render(fileName, reader.lines(), annotation);
+            return sourcePrinter.render(fileName, reader.lines(), marker);
         }
         catch (IOException e) {
             return String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e));

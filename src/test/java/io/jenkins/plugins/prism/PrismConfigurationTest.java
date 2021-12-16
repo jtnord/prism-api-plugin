@@ -58,6 +58,9 @@ class PrismConfigurationTest {
         assertThat(get(configuration, FIRST)).isEqualTo(FIRST);
         assertThat(get(configuration, RELATIVE)).isEqualTo(getWorkspaceChild(RELATIVE));
         assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEqualTo(NORMALIZED);
+
+        configuration.clearRepeatableProperties();
+        assertThat(configuration.getSourceDirectories()).isEmpty();
     }
 
     @Test
@@ -78,6 +81,20 @@ class PrismConfigurationTest {
         assertThat(get(configuration, absoluteUnix)).isEqualTo(absoluteUnix);
         assertThat(get(configuration, absoluteWindows)).isEqualTo(normalize(absoluteWindows));
         assertThat(get(configuration, absoluteWindowsNormalized)).isEqualTo(absoluteWindowsNormalized);
+    }
+
+    @Test
+    void shouldInitializeThemes() {
+        PrismConfiguration configuration = createConfiguration();
+
+        assertThat(configuration.getTheme())
+                .isEqualTo(PrismTheme.PRISM)
+                .extracting(PrismTheme::getFileName)
+                .isEqualTo("prism.css");
+        configuration.setTheme(PrismTheme.COY);
+        assertThat(configuration.getTheme()).isEqualTo(PrismTheme.COY);
+
+        assertThat(configuration.doFillThemeItems()).extracting(o -> o.value).contains(PrismTheme.PRISM.name());
     }
 
     private String getWorkspaceChild(final String expected) {

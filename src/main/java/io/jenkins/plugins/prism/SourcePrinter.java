@@ -52,15 +52,15 @@ public class SourcePrinter {
      *         the file name of the source code file
      * @param lines
      *         the lines of the source code
-     * @param annotation
+     * @param marker
      *         the issue to show
      *
      * @return the source code as colorized HTML
      */
-    public String render(final String fileName, final Stream<String> lines, final Annotation annotation) {
+    public String render(final String fileName, final Stream<String> lines, final Marker marker) {
         try (LookaheadStream stream = new LookaheadStream(lines)) {
-            int start = annotation.getLineStart();
-            int end = annotation.getLineEnd();
+            int start = marker.getLineStart();
+            int end = marker.getLineEnd();
 
             StringBuilder before = readBlockUntilLine(stream, start - 1);
             StringBuilder marked = readBlockUntilLine(stream, end);
@@ -68,8 +68,8 @@ public class SourcePrinter {
 
             String language = selectLanguageClass(fileName);
             String code = asCode(before, language, LINE_NUMBERS, MATCH_BRACES)
-                    + asMarkedCode(marked, annotation, language, LINE_NUMBERS, "highlight", MATCH_BRACES)
-                    + createInfoPanel(annotation)
+                    + asMarkedCode(marked, marker, language, LINE_NUMBERS, "highlight", MATCH_BRACES)
+                    + createInfoPanel(marker)
                     + asCode(after, language, LINE_NUMBERS, MATCH_BRACES);
 
             return pre().with(new UnescapedText(code)).renderFormatted();
@@ -85,17 +85,17 @@ public class SourcePrinter {
         return marked;
     }
 
-    private String createInfoPanel(final Annotation annotation) {
-        return createBox(annotation).withClass("analysis-warning").render();
+    private String createInfoPanel(final Marker marker) {
+        return createBox(marker).withClass("analysis-warning").render();
     }
 
-    private ContainerTag createBox(final Annotation annotation) {
-        if (StringUtils.isEmpty(annotation.getDescription())) {
-            return createTitle(annotation.getTitle(), annotation.getIcon(), false);
+    private ContainerTag createBox(final Marker marker) {
+        if (StringUtils.isEmpty(marker.getDescription())) {
+            return createTitle(marker.getTitle(), marker.getIcon(), false);
         }
         else {
-            return createTitleAndCollapsedDescription(annotation.getTitle(),
-                    annotation.getDescription(), annotation.getIcon());
+            return createTitleAndCollapsedDescription(marker.getTitle(),
+                    marker.getDescription(), marker.getIcon());
         }
     }
 
@@ -198,10 +198,10 @@ public class SourcePrinter {
         }
     }
 
-    private String asMarkedCode(final StringBuilder text, final Annotation annotation, final String... classes) {
+    private String asMarkedCode(final StringBuilder text, final Marker marker, final String... classes) {
         StringBuilder marked;
-        if (annotation.getLineStart() == annotation.getLineEnd()) {
-            marked = COLUMN_MARKER.markColumns(text.toString(), annotation.getColumnStart(), annotation.getColumnEnd());
+        if (marker.getLineStart() == marker.getLineEnd()) {
+            marked = COLUMN_MARKER.markColumns(text.toString(), marker.getColumnStart(), marker.getColumnEnd());
         }
         else {
             marked = text;
