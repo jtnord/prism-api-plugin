@@ -2,6 +2,7 @@ package io.jenkins.plugins.prism;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -39,10 +40,10 @@ class PrismConfigurationTest {
 
         assertThat(configuration.getSourceDirectories()).isEmpty();
 
-        assertThat(get(configuration, "")).isEqualTo(NORMALIZED);
-        assertThat(get(configuration, "-")).isEqualTo(NORMALIZED);
-        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEqualTo(NORMALIZED);
-        assertThat(get(configuration, RELATIVE)).isEqualTo(getWorkspaceChild(RELATIVE));
+        assertThat(get(configuration, "")).isEmpty();
+        assertThat(get(configuration, "-")).isEmpty();
+        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEmpty();
+        assertThat(get(configuration, RELATIVE)).containsExactly(getWorkspaceChild(RELATIVE));
     }
 
     @Test
@@ -55,9 +56,13 @@ class PrismConfigurationTest {
         verify(facade).save();
         assertThat(configuration.getSourceDirectories()).isEqualTo(SOURCE_ROOTS);
 
-        assertThat(get(configuration, FIRST)).isEqualTo(FIRST);
-        assertThat(get(configuration, RELATIVE)).isEqualTo(getWorkspaceChild(RELATIVE));
-        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEqualTo(NORMALIZED);
+        assertThat(get(configuration, "")).isEmpty();
+        assertThat(get(configuration, "-")).isEmpty();
+        assertThat(get(configuration, FIRST)).containsExactly(FIRST);
+        assertThat(get(configuration, RELATIVE)).containsExactly(getWorkspaceChild(RELATIVE));
+        assertThat(get(configuration, RELATIVE, FIRST)).containsExactlyInAnyOrder(FIRST, getWorkspaceChild(RELATIVE));
+        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEmpty();
+        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING, FIRST)).containsExactly(FIRST);
 
         configuration.clearRepeatableProperties();
         assertThat(configuration.getSourceDirectories()).isEmpty();
@@ -68,7 +73,8 @@ class PrismConfigurationTest {
         PrismConfiguration configuration = createConfiguration();
 
         configuration.setSourceDirectories(
-                Arrays.asList(new SourceCodeDirectory("/absolute/unix"), new SourceCodeDirectory("C:\\absolute\\windows")));
+                Arrays.asList(new SourceCodeDirectory("/absolute/unix"),
+                        new SourceCodeDirectory("C:\\absolute\\windows")));
 
         String relativeUnix = "relative/unix";
         String relativeWindows = "relative\\windows";
@@ -76,11 +82,11 @@ class PrismConfigurationTest {
         String absoluteWindows = "C:\\absolute\\windows";
         String absoluteWindowsNormalized = "C:/absolute/windows";
 
-        assertThat(get(configuration, relativeUnix)).isEqualTo(getWorkspaceChild(relativeUnix));
-        assertThat(get(configuration, relativeWindows)).isEqualTo(getWorkspaceChild(relativeWindows));
-        assertThat(get(configuration, absoluteUnix)).isEqualTo(absoluteUnix);
-        assertThat(get(configuration, absoluteWindows)).isEqualTo(normalize(absoluteWindows));
-        assertThat(get(configuration, absoluteWindowsNormalized)).isEqualTo(absoluteWindowsNormalized);
+        assertThat(get(configuration, relativeUnix)).containsExactly(getWorkspaceChild(relativeUnix));
+        assertThat(get(configuration, relativeWindows)).containsExactly(getWorkspaceChild(relativeWindows));
+        assertThat(get(configuration, absoluteUnix)).containsExactly(absoluteUnix);
+        assertThat(get(configuration, absoluteWindows)).containsExactly(normalize(absoluteWindows));
+        assertThat(get(configuration, absoluteWindowsNormalized)).containsExactly(absoluteWindowsNormalized);
     }
 
     @Test
@@ -105,9 +111,13 @@ class PrismConfigurationTest {
         return PATH_UTIL.getAbsolutePath(remote);
     }
 
-    private String get(final PrismConfiguration configuration, final String absoluteUnix) {
+    private List<String> get(final PrismConfiguration configuration, final String... absolutePaths) {
         FilePath path = new FilePath((VirtualChannel) null, NORMALIZED);
-        return normalize(configuration.getPermittedSourceDirectory(path, absoluteUnix).getRemote());
+        return configuration.getPermittedSourceDirectories(path, Arrays.asList(absolutePaths))
+                .stream()
+                .map(FilePath::getRemote)
+                .map(this::normalize)
+                .collect(Collectors.toList());
     }
 
     private PrismConfiguration createConfiguration() {

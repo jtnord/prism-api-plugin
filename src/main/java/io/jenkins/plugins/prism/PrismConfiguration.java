@@ -2,6 +2,7 @@ package io.jenkins.plugins.prism;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -113,29 +114,34 @@ public class PrismConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Filters the specified collection of additional directories so that only permitted source directories will be
-     * returned. Permitted source directories are absolute paths that have been registered using {@link
+     * Filters the specified collection of additional source code directories so that only permitted source directories
+     * will be returned. Permitted source directories are absolute paths that have been registered using {@link
      * #setSourceDirectories(List)} or relative paths in the workspace.
      *
      * @param workspace
      *         the workspace containing the affected files
-     * @param sourceDirectory
-     *         additional source directly (might be empty): a relative path in the workspace or an absolute path
+     * @param requestedSourceDirectories
+     *         additional source directories (might be empty): either using a relative path in the workspace or an absolute path
      *
-     * @return the permitted source directory - or as a fallback the workspace path
+     * @return the permitted source directories
      */
-    public FilePath getPermittedSourceDirectory(final FilePath workspace, final String sourceDirectory) {
+    public Set<FilePath> getPermittedSourceDirectories(final FilePath workspace, final List<String> requestedSourceDirectories) {
         PathUtil pathUtil = new PathUtil();
-        String normalized = pathUtil.getAbsolutePath(sourceDirectory);
-        if (pathUtil.isAbsolute(normalized)) {
-            if (normalizedSourceDirectories.contains(normalized)) { // skip not registered absolute paths
-                return workspace.child(normalized);
+        Set<FilePath> permittedDirectories = new HashSet<>();
+        for (String sourceDirectory : requestedSourceDirectories) {
+            if (StringUtils.isNotBlank(sourceDirectory) && !"-".equals(sourceDirectory)) {
+                String normalized = pathUtil.getAbsolutePath(sourceDirectory);
+                if (pathUtil.isAbsolute(normalized)) {
+                    if (normalizedSourceDirectories.contains(normalized)) { // add only registered absolute paths
+                        permittedDirectories.add(workspace.child(normalized));
+                    }
+                }
+                else {
+                    permittedDirectories.add(workspace.child(normalized)); // relative workspace paths are always ok
+                }
             }
         }
-        else if (StringUtils.isNotBlank(sourceDirectory) && !"-".equals(sourceDirectory)) {
-            return workspace.child(normalized);
-        }
-        return workspace;
+        return permittedDirectories;
     }
 
     /**
