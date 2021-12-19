@@ -1,7 +1,9 @@
 package io.jenkins.plugins.prism;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,7 @@ class PrismConfigurationTest {
 
     private static final List<SourceCodeDirectory> SOURCE_ROOTS
             = Arrays.asList(new SourceCodeDirectory(FIRST), new SourceCodeDirectory(SECOND));
+    private static final SourceDirectoryFilter FILTER = new SourceDirectoryFilter();
 
     @Test
     void shouldHaveNoRootFoldersWhenCreated() {
@@ -113,7 +116,12 @@ class PrismConfigurationTest {
 
     private List<String> get(final PrismConfiguration configuration, final String... absolutePaths) {
         FilePath path = new FilePath((VirtualChannel) null, NORMALIZED);
-        return configuration.getPermittedSourceDirectories(path, Arrays.asList(absolutePaths))
+        Set<String> sourceDirectories = configuration.getSourceDirectories()
+                .stream()
+                .map(SourceCodeDirectory::getPath)
+                .map(PATH_UTIL::getAbsolutePath)
+                .collect(Collectors.toSet());
+        return FILTER.getPermittedSourceDirectories(path, sourceDirectories, new HashSet<>(Arrays.asList(absolutePaths)))
                 .stream()
                 .map(FilePath::getRemote)
                 .map(this::normalize)
