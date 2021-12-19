@@ -2,11 +2,11 @@ package io.jenkins.plugins.prism;
 
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
 
-import io.jenkins.plugins.casc.ConfigurationAsCode;
-import io.jenkins.plugins.casc.ConfiguratorException;
-import io.jenkins.plugins.util.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
+import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,14 +15,16 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
+public class ConfigurationAsCodeITest {
+    /** Jenkins SUT. */
+    @Rule
+    public JenkinsConfiguredWithCodeRule jenkins = new JenkinsConfiguredWithCodeRule();
+
     /**
      * Reads a YAML file with permitted source code directories and verifies that the directories have been loaded.
      */
-    @Test
+    @Test @ConfiguredWithCode("sourceDirectories.yaml")
     public void shouldImportSourceDirectoriesFromYaml() {
-        configureJenkins("sourceDirectories.yaml");
-
         List<SourceCodeDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
         assertThat(folders.stream().map(SourceCodeDirectory::getPath))
                 .hasSize(2)
@@ -32,19 +34,8 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
     /**
      * Reads a YAML file with the active theme.
      */
-    @Test
+    @Test @ConfiguredWithCode("theme.yaml")
     public void shouldImportTheme() {
-        configureJenkins("theme.yaml");
-
         assertThat(PrismConfiguration.getInstance().getTheme()).isEqualTo(PrismTheme.DARK);
-    }
-
-    private void configureJenkins(final String fileName) {
-        try {
-            ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toUri().toString());
-        }
-        catch (ConfiguratorException e) {
-            throw new AssertionError(e);
-        }
     }
 }
