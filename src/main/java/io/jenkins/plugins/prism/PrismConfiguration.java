@@ -44,6 +44,7 @@ import io.jenkins.plugins.util.GlobalConfigurationItem;
  */
 @Extension
 @Symbol("prismConfiguration")
+@SuppressWarnings("PMD.DataClass")
 public class PrismConfiguration extends GlobalConfigurationItem {
     private static final PathUtil PATH_UTIL = new PathUtil();
 

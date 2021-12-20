@@ -5,6 +5,8 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
 import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
 
@@ -17,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class ConfigurationAsCodeITest {
     /** Jenkins SUT. */
-    @Rule
+    @Rule @SuppressFBWarnings("URF")
     public JenkinsConfiguredWithCodeRule jenkins = new JenkinsConfiguredWithCodeRule();
 
     /**

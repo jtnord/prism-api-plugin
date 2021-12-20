@@ -1,7 +1,6 @@
 package io.jenkins.plugins.prism;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +21,7 @@ public class SourceDirectoryFilter {
     /**
      * Filters the specified collection of additional source code directories so that only permitted source directories
      * will be returned. Permitted source directories are absolute paths that have been registered using {@link
-     * PrismConfiguration#setSourceDirectories(List)} or relative paths in the workspace.
+     * PrismConfiguration#setSourceDirectories(java.util.List)} or relative paths in the workspace.
      *
      * @param workspace
      *         the workspace containing the affected files
