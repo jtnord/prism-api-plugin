@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/controls" >
 
-  <f:entry title="${%Absolute path or relative workspace path to source code files}" field="path">
+  <f:entry title="${%Absolute path of permitted directory}" field="path">
     <c:safe-textbox/>
   </f:entry>
 

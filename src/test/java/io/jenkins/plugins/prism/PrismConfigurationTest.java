@@ -33,8 +33,8 @@ class PrismConfigurationTest {
 
     private static final String NORMALIZED = PATH_UTIL.getAbsolutePath("/workspace");
 
-    private static final List<SourceCodeDirectory> SOURCE_ROOTS
-            = Arrays.asList(new SourceCodeDirectory(FIRST), new SourceCodeDirectory(SECOND));
+    private static final List<PermittedSourceCodeDirectory> SOURCE_ROOTS
+            = Arrays.asList(new PermittedSourceCodeDirectory(FIRST), new PermittedSourceCodeDirectory(SECOND));
     private static final SourceDirectoryFilter FILTER = new SourceDirectoryFilter();
 
     @Test
@@ -76,8 +76,8 @@ class PrismConfigurationTest {
         PrismConfiguration configuration = createConfiguration();
 
         configuration.setSourceDirectories(
-                Arrays.asList(new SourceCodeDirectory("/absolute/unix"),
-                        new SourceCodeDirectory("C:\\absolute\\windows")));
+                Arrays.asList(new PermittedSourceCodeDirectory("/absolute/unix"),
+                        new PermittedSourceCodeDirectory("C:\\absolute\\windows")));
 
         String relativeUnix = "relative/unix";
         String relativeWindows = "relative\\windows";
@@ -118,7 +118,7 @@ class PrismConfigurationTest {
         FilePath path = new FilePath((VirtualChannel) null, NORMALIZED);
         Set<String> sourceDirectories = configuration.getSourceDirectories()
                 .stream()
-                .map(SourceCodeDirectory::getPath)
+                .map(PermittedSourceCodeDirectory::getPath)
                 .map(PATH_UTIL::getAbsolutePath)
                 .collect(Collectors.toSet());
         return FILTER.getPermittedSourceDirectories(path, sourceDirectories, new HashSet<>(Arrays.asList(absolutePaths)))

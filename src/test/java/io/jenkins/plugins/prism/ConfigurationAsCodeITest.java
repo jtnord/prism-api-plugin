@@ -27,8 +27,8 @@ public class ConfigurationAsCodeITest {
      */
     @Test @ConfiguredWithCode("sourceDirectories.yaml")
     public void shouldImportSourceDirectoriesFromYaml() {
-        List<SourceCodeDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
-        assertThat(folders.stream().map(SourceCodeDirectory::getPath))
+        List<PermittedSourceCodeDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
+        assertThat(folders.stream().map(PermittedSourceCodeDirectory::getPath))
                 .hasSize(2)
                 .containsExactlyInAnyOrder("C:\\Windows", "/absolute");
     }
