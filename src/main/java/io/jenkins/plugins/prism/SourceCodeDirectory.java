@@ -1,6 +1,7 @@
 package io.jenkins.plugins.prism;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,7 +17,7 @@ import hudson.model.Descriptor;
  *
  * @author Ullrich Hafner
  */
-public class SourceCodeDirectory extends AbstractDescribableImpl<SourceCodeDirectory> implements Serializable {
+public final class SourceCodeDirectory extends AbstractDescribableImpl<SourceCodeDirectory> implements Serializable {
     private static final long serialVersionUID = -3864564528382064924L;
 
     private final String path;
@@ -36,6 +37,23 @@ public class SourceCodeDirectory extends AbstractDescribableImpl<SourceCodeDirec
 
     public String getPath() {
         return path;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SourceCodeDirectory that = (SourceCodeDirectory) o;
+        return Objects.equals(path, that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
     }
 
     /**

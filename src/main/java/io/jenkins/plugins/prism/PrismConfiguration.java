@@ -69,11 +69,6 @@ public class PrismConfiguration extends GlobalConfigurationItem {
         load();
     }
 
-    @VisibleForTesting
-    Set<String> getNormalizedSourceDirectories() {
-        return normalizedSourceDirectories;
-    }
-
     @Override
     protected void clearRepeatableProperties() {
         setSourceDirectories(new ArrayList<>());
@@ -113,6 +108,18 @@ public class PrismConfiguration extends GlobalConfigurationItem {
                 .collect(Collectors.toSet());
 
         save();
+    }
+
+    /**
+     * Returns whether the specified director is registered as permitted source code directory.
+     *
+     * @param sourceDirectory
+     *         the source directory to check
+     *
+     * @return {@code true} if the specified director is registered, {@code false} otherwise
+     */
+    public boolean isAllowedSourceDirectory(final String sourceDirectory) {
+        return normalizedSourceDirectories.contains(PATH_UTIL.getAbsolutePath(sourceDirectory));
     }
 
     /**
