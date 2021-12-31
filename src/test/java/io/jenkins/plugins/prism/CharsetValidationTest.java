@@ -9,20 +9,20 @@ import hudson.util.ComboBoxModel;
 
 import io.jenkins.plugins.util.FormValidationAssert;
 
-import static io.jenkins.plugins.prism.SourceEncodingValidation.*;
+import static io.jenkins.plugins.prism.CharsetValidation.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Tests the class {@link SourceDirectoryValidation}.
+ * Tests the class {@link CharsetValidation}.
  *
  * @author Arne Schöntag
  * @author Stephan Plöderl
  * @author Ullrich Hafner
  */
-class SourceEncodingValidationTest {
+class CharsetValidationTest {
     @Test
     void shouldValidateCharsets() {
-        SourceEncodingValidation model = new SourceEncodingValidation();
+        CharsetValidation model = new CharsetValidation();
 
         FormValidationAssert.assertThat(model.validateCharset(""))
                 .isOk();
@@ -35,7 +35,7 @@ class SourceEncodingValidationTest {
 
     @Test
     void shouldContainDefaultCharsets() {
-        SourceEncodingValidation model = new SourceEncodingValidation();
+        CharsetValidation model = new CharsetValidation();
 
         ComboBoxModel allCharsets = model.getAllCharsets();
         assertThat(allCharsets).isNotEmpty().contains("UTF-8", "ISO-8859-1");
@@ -43,7 +43,7 @@ class SourceEncodingValidationTest {
 
     @Test
     void shouldFallbackToPlatformCharset() {
-        SourceEncodingValidation model = new SourceEncodingValidation();
+        CharsetValidation model = new CharsetValidation();
 
         assertThat(model.getCharset("UTF-8")).isEqualTo(StandardCharsets.UTF_8);
         assertThat(model.getCharset("nothing")).isEqualTo(Charset.defaultCharset());

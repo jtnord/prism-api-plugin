@@ -14,12 +14,12 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
 /**
- * Validates the source encoding configuration.
+ * Validates the charset configuration.
  *
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.GodClass")
-public class SourceEncodingValidation {
+public class CharsetValidation {
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
 
     /**
