@@ -108,7 +108,7 @@ public class SourceCodeConfigurationValidation {
      *
      * @return the validation result
      */
-    public FormValidation validateSourceDirectory(final AbstractProject<?, ?> project, final String sourceDirectory) {
+    public FormValidation validateSourceDirectory(@CheckForNull final AbstractProject<?, ?> project, final String sourceDirectory) {
         PathUtil pathUtil = new PathUtil();
         if (pathUtil.isAbsolute(sourceDirectory)) {
             if (sourceDirectoryValidator.isAllowedSourceDirectory(sourceDirectory)) {

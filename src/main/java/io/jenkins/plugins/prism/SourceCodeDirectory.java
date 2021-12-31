@@ -7,13 +7,21 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
+import hudson.model.Item;
+import hudson.util.FormValidation;
+
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Approved directory that contains source code files that can be shown in Jenkins´ user interface.
+ * A relative or absolute directory that contains source code files that can be shown in Jenkins´ user interface.
  *
  * @author Ullrich Hafner
  */
@@ -63,10 +71,33 @@ public final class SourceCodeDirectory extends AbstractDescribableImpl<SourceCod
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<SourceCodeDirectory> {
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+        private static final SourceCodeConfigurationValidation VALIDATION = new SourceCodeConfigurationValidation();
+
         @NonNull
         @Override
         public String getDisplayName() {
             return StringUtils.EMPTY;
+        }
+
+        /**
+         * Performs on-the-fly validation on the source code directory.
+         *
+         * @param project
+         *         the project that is configured
+         * @param path
+         *         the relative or absolute path
+         *
+         * @return the validation result
+         */
+        @POST
+        public FormValidation doCheckPath(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String path) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
+
+            return VALIDATION.validateSourceDirectory(project, path);
         }
     }
 }
