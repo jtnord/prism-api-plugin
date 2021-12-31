@@ -12,8 +12,10 @@ import edu.hm.hafner.util.PathUtil;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -52,7 +54,7 @@ class PrismConfigurationTest {
     @Test
     void shouldSaveConfigurationIfFoldersAreAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-        PrismConfiguration configuration = new PrismConfiguration(facade);
+        PrismConfiguration configuration = new PrismConfiguration(facade, mock(JenkinsFacade.class));
 
         configuration.setSourceDirectories(SOURCE_ROOTS);
 
@@ -129,6 +131,8 @@ class PrismConfigurationTest {
     }
 
     private PrismConfiguration createConfiguration() {
-        return new PrismConfiguration(mock(GlobalConfigurationFacade.class));
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.hasPermission(Jenkins.ADMINISTER)).thenReturn(true);
+        return new PrismConfiguration(mock(GlobalConfigurationFacade.class), jenkins);
     }
 }

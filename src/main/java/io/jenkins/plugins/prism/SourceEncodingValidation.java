@@ -14,7 +14,7 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
 /**
- * Validates all properties (encoding, directories) of the source code configuration.
+ * Validates the source encoding configuration.
  *
  * @author Ullrich Hafner
  */

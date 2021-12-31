@@ -11,7 +11,7 @@ import hudson.model.AbstractProject;
 import hudson.util.FormValidation;
 
 /**
- * Validates all properties (encoding, directories) of the source code configuration.
+ * Validates the source directories configuration.
  *
  * @author Ullrich Hafner
  */

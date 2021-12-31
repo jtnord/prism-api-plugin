@@ -50,11 +50,11 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @SuppressWarnings("PMD.DataClass")
 public class PrismConfiguration extends GlobalConfigurationItem {
     private static final PathUtil PATH_UTIL = new PathUtil();
-    private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
     private List<PermittedSourceCodeDirectory> sourceDirectories = Collections.emptyList();
     private Set<String> normalizedSourceDirectories = Collections.emptySet();
     private PrismTheme theme = PrismTheme.PRISM;
+    private final JenkinsFacade jenkins;
 
     /**
      * Creates the global configuration of source code directories and loads the initial values from the corresponding
@@ -63,12 +63,16 @@ public class PrismConfiguration extends GlobalConfigurationItem {
     public PrismConfiguration() {
         super();
 
+        jenkins =  new JenkinsFacade();
+
         load();
     }
 
     @VisibleForTesting
-    PrismConfiguration(final GlobalConfigurationFacade facade) {
+    PrismConfiguration(final GlobalConfigurationFacade facade, final JenkinsFacade jenkins) {
         super(facade);
+
+        this.jenkins = jenkins;
 
         load();
     }
@@ -149,7 +153,7 @@ public class PrismConfiguration extends GlobalConfigurationItem {
     @POST
     public ListBoxModel doFillThemeItems() {
         ListBoxModel options = new ListBoxModel();
-        if (JENKINS.hasPermission(Jenkins.ADMINISTER)) {
+        if (jenkins.hasPermission(Jenkins.ADMINISTER)) {
             options.addAll(PrismTheme.getAllDisplayNames());
         }
         return options;
