@@ -72,7 +72,7 @@ public final class SourceCodeDirectory extends AbstractDescribableImpl<SourceCod
     @Extension
     public static class DescriptorImpl extends Descriptor<SourceCodeDirectory> {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
-        private static final SourceCodeConfigurationValidation VALIDATION = new SourceCodeConfigurationValidation();
+        private static final SourceDirectoryValidation VALIDATION = new SourceDirectoryValidation();
 
         @NonNull
         @Override

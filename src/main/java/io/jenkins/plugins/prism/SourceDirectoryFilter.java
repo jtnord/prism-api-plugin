@@ -10,7 +10,7 @@ import edu.hm.hafner.util.PathUtil;
 import hudson.FilePath;
 
 /**
- * Removes source code directories that are not approved from the set of source code paths. A directory is considered
+ * Filters source code directories that are not approved in Jenkins' global configuration. A directory is considered
  * safe if it is a sub-folder in the agent workspace. Directories outside the workspace need to be approved by an
  * administrator in Jenkins global configuration page.
  *

@@ -4,12 +4,19 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.util.PathUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
+
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Approved directory that contains source code files that can be shown in Jenkins´ user interface.
@@ -45,10 +52,31 @@ public class PermittedSourceCodeDirectory extends AbstractDescribableImpl<Permit
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<PermittedSourceCodeDirectory> {
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+        private static final PathUtil PATH_UTIL = new PathUtil();
+
         @NonNull
         @Override
         public String getDisplayName() {
             return StringUtils.EMPTY;
+        }
+
+        /**
+         * Performs on-the-fly validation on the source code directory.
+         *
+         * @param path
+         *         the relative or absolute path
+         *
+         * @return the validation result
+         */
+        @POST
+        public FormValidation doCheckPath(@QueryParameter final String path) {
+            if (JENKINS.hasPermission(Jenkins.ADMINISTER)) {
+                if (!PATH_UTIL.isAbsolute(path)) {
+                    return FormValidation.error("All paths need to be absolute paths on the agent.");
+                }
+            }
+            return FormValidation.ok();
         }
     }
 }

@@ -1,6 +1,5 @@
 package io.jenkins.plugins.prism;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
@@ -8,12 +7,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import hudson.FilePath;
-import hudson.model.AbstractProject;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
@@ -23,23 +19,8 @@ import hudson.util.FormValidation;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.GodClass")
-public class SourceCodeConfigurationValidation {
-    static final String DIRECTORY_NOT_REGISTERED = "Source directory is not permitted yet. Please registered this directory in Jenkins global configuration.";
-
+public class SourceEncodingValidation {
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
-    private final SourceDirectoryValidator sourceDirectoryValidator;
-
-    /**
-     * Creates a new instance of {@link SourceCodeConfigurationValidation}.
-     */
-    public SourceCodeConfigurationValidation() {
-        this(new SourceDirectoryValidator());
-    }
-
-    @VisibleForTesting
-    SourceCodeConfigurationValidation(final SourceDirectoryValidator sourceDirectoryValidator) {
-        this.sourceDirectoryValidator = sourceDirectoryValidator;
-    }
 
     /**
      * Returns all available character set names.
@@ -95,45 +76,5 @@ public class SourceCodeConfigurationValidation {
     static String createWrongEncodingErrorMessage() {
         return Messages.FieldValidator_Error_DefaultEncoding(
                 "https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html");
-    }
-
-    /**
-     * Performs on-the-fly validation on the source code directory. Checks if relative paths are part of the workspace and
-     * that absolute paths are registered.
-     *
-     * @param project
-     *         the project that is configured
-     * @param sourceDirectory
-     *         the source directory to use
-     *
-     * @return the validation result
-     */
-    public FormValidation validateSourceDirectory(@CheckForNull final AbstractProject<?, ?> project, final String sourceDirectory) {
-        PathUtil pathUtil = new PathUtil();
-        if (pathUtil.isAbsolute(sourceDirectory)) {
-            if (sourceDirectoryValidator.isAllowedSourceDirectory(sourceDirectory)) {
-                return FormValidation.ok();
-            }
-            return FormValidation.error(DIRECTORY_NOT_REGISTERED);
-        }
-        if (project != null) { // there is no workspace in pipelines
-            try {
-                FilePath workspace = project.getSomeWorkspace();
-                if (workspace != null && workspace.exists()) {
-                    return workspace.validateRelativeDirectory(sourceDirectory);
-                }
-            }
-            catch (InterruptedException | IOException ignore) {
-                // ignore and return ok
-            }
-        }
-
-        return FormValidation.ok();
-    }
-
-    static class SourceDirectoryValidator {
-        boolean isAllowedSourceDirectory(final String sourceDirectory) {
-            return PrismConfiguration.getInstance().isAllowedSourceDirectory(sourceDirectory);
-        }
     }
 }

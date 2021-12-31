@@ -10,13 +10,16 @@ import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.util.ListBoxModel;
 import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.util.GlobalConfigurationItem;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Global system configuration for Prism. These configuration options are used globally for all jobs and require
@@ -47,6 +50,7 @@ import io.jenkins.plugins.util.GlobalConfigurationItem;
 @SuppressWarnings("PMD.DataClass")
 public class PrismConfiguration extends GlobalConfigurationItem {
     private static final PathUtil PATH_UTIL = new PathUtil();
+    private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
     private List<PermittedSourceCodeDirectory> sourceDirectories = Collections.emptyList();
     private Set<String> normalizedSourceDirectories = Collections.emptySet();
@@ -142,9 +146,12 @@ public class PrismConfiguration extends GlobalConfigurationItem {
      *
      * @return a model with all available themes
      */
+    @POST
     public ListBoxModel doFillThemeItems() {
         ListBoxModel options = new ListBoxModel();
-        options.addAll(PrismTheme.getAllDisplayNames());
+        if (JENKINS.hasPermission(Jenkins.ADMINISTER)) {
+            options.addAll(PrismTheme.getAllDisplayNames());
+        }
         return options;
     }
 }
