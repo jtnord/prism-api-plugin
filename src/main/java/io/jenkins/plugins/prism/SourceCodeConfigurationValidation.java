@@ -12,8 +12,6 @@ import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.QueryParameter;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.util.ComboBoxModel;
@@ -29,18 +27,18 @@ public class SourceCodeConfigurationValidation {
     static final String DIRECTORY_NOT_REGISTERED = "Source directory is not permitted yet. Please registered this directory in Jenkins global configuration.";
 
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
-    private final PrismConfiguration prism;
+    private final SourceDirectoryValidator sourceDirectoryValidator;
 
     /**
      * Creates a new instance of {@link SourceCodeConfigurationValidation}.
      */
     public SourceCodeConfigurationValidation() {
-        this(PrismConfiguration.getInstance());
+        this(new SourceDirectoryValidator());
     }
 
     @VisibleForTesting
-    SourceCodeConfigurationValidation(final PrismConfiguration prism) {
-        this.prism = prism;
+    SourceCodeConfigurationValidation(final SourceDirectoryValidator sourceDirectoryValidator) {
+        this.sourceDirectoryValidator = sourceDirectoryValidator;
     }
 
     /**
@@ -100,20 +98,20 @@ public class SourceCodeConfigurationValidation {
     }
 
     /**
-     * Performs on-the-fly validation on the source code directory.
+     * Performs on-the-fly validation on the source code directory. Checks if relative paths are part of the workspace and
+     * that absolute paths are registered.
      *
      * @param project
      *         the project that is configured
      * @param sourceDirectory
-     *         the file pattern
+     *         the source directory to use
      *
      * @return the validation result
      */
-    public FormValidation validateSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
-            @QueryParameter final String sourceDirectory) {
+    public FormValidation validateSourceDirectory(final AbstractProject<?, ?> project, final String sourceDirectory) {
         PathUtil pathUtil = new PathUtil();
         if (pathUtil.isAbsolute(sourceDirectory)) {
-            if (prism.isAllowedSourceDirectory(sourceDirectory)) {
+            if (sourceDirectoryValidator.isAllowedSourceDirectory(sourceDirectory)) {
                 return FormValidation.ok();
             }
             return FormValidation.error(DIRECTORY_NOT_REGISTERED);
@@ -131,5 +129,11 @@ public class SourceCodeConfigurationValidation {
         }
 
         return FormValidation.ok();
+    }
+
+    static class SourceDirectoryValidator {
+        boolean isAllowedSourceDirectory(final String sourceDirectory) {
+            return PrismConfiguration.getInstance().isAllowedSourceDirectory(sourceDirectory);
+        }
     }
 }

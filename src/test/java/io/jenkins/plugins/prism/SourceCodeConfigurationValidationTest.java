@@ -101,19 +101,19 @@ class SourceCodeConfigurationValidationTest {
 
     @Test
     void shouldValidateWithWorkspace() {
-        PrismConfiguration prismConfiguration = mock(PrismConfiguration.class);
-        SourceCodeConfigurationValidation model = new SourceCodeConfigurationValidation(prismConfiguration);
+        SourceDirectoryValidator sourceDirectoryValidator = mock(SourceDirectoryValidator.class);
+        SourceCodeConfigurationValidation model = new SourceCodeConfigurationValidation(sourceDirectoryValidator);
 
         String absoluteDirectory = "/absolute";
         FormValidationAssert.assertThat(model.validateSourceDirectory(mock(FreeStyleProject.class), absoluteDirectory))
                 .isError()
                 .hasMessage(DIRECTORY_NOT_REGISTERED);
-        when(prismConfiguration.isAllowedSourceDirectory(absoluteDirectory)).thenReturn(true);
+        when(sourceDirectoryValidator.isAllowedSourceDirectory(absoluteDirectory)).thenReturn(true);
         FormValidationAssert.assertThat(model.validateSourceDirectory(mock(FreeStyleProject.class), absoluteDirectory))
                 .isOk();
     }
 
     private SourceCodeConfigurationValidation createValidation() {
-        return new SourceCodeConfigurationValidation(mock(PrismConfiguration.class));
+        return new SourceCodeConfigurationValidation(mock(SourceDirectoryValidator.class));
     }
 }
