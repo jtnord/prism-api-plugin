@@ -71,10 +71,8 @@ public class PermittedSourceCodeDirectory extends AbstractDescribableImpl<Permit
          */
         @POST
         public FormValidation doCheckPath(@QueryParameter final String path) {
-            if (JENKINS.hasPermission(Jenkins.ADMINISTER)) {
-                if (!PATH_UTIL.isAbsolute(path)) {
-                    return FormValidation.error("All paths need to be absolute paths on the agent.");
-                }
+            if (JENKINS.hasPermission(Jenkins.ADMINISTER) && !PATH_UTIL.isAbsolute(path)) {
+                return FormValidation.error("All paths need to be absolute paths on the agent.");
             }
             return FormValidation.ok();
         }
