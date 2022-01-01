@@ -32,6 +32,16 @@ public enum SourceCodeRetention {
         return localizable.toString(LocaleProvider.getLocale());
     }
 
+    /**
+     * Cleanup the stored source code files of previous builds.
+     *
+     * @param build
+     *         starting with this build, all previous builds will be scanned for source code files that can be deleted
+     * @param directory
+     *         the directory, where the source code files are stored within each build
+     * @param log
+     *         logger
+     */
     public void cleanup(final Run<?, ?> build, final String directory, final FilteredLog log) {
         cleanup.clean(build, directory, log);
     }
@@ -45,7 +55,8 @@ public enum SourceCodeRetention {
     static class CleanupLast extends Cleanup {
         @Override
         void clean(final Run<?, ?> currentBuild, final String directory, final FilteredLog log) {
-            for (Run<?, ?> build = currentBuild.getPreviousCompletedBuild(); build != null; build = currentBuild.getPreviousCompletedBuild()) {
+            for (Run<?, ?> build = currentBuild.getPreviousCompletedBuild();
+                    build != null; build = currentBuild.getPreviousCompletedBuild()) {
                 Path buildDir = build.getRootDir().toPath();
                 Path sourcesFolder = buildDir.resolve(directory);
                 if (Files.exists(sourcesFolder)) {
@@ -54,7 +65,8 @@ public enum SourceCodeRetention {
                         log.logInfo("Deleting source code files of build " + build.getDisplayName());
                     }
                     catch (IOException exception) {
-                        log.logException(exception, "Could not delete source code files of build " + build.getDisplayName());
+                        log.logException(exception,
+                                "Could not delete source code files of build " + build.getDisplayName());
                     }
                 }
             }
