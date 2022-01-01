@@ -59,7 +59,7 @@ public enum SourceCodeRetention {
         @Override
         void clean(final Run<?, ?> currentBuild, final String directory, final FilteredLog log) {
             for (Run<?, ?> build = currentBuild.getPreviousCompletedBuild();
-                    build != null; build = currentBuild.getPreviousCompletedBuild()) {
+                    build != null; build = build.getPreviousCompletedBuild()) {
                 Path buildDir = build.getRootDir().toPath();
                 Path sourcesFolder = buildDir.resolve(directory);
                 if (Files.exists(sourcesFolder)) {
