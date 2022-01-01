@@ -16,8 +16,11 @@ import hudson.model.Run;
  * Defines the retention strategy for source code files.
  */
 public enum SourceCodeRetention {
+    /** Never store source code files. */
     NEVER(new Cleanup(), Messages._SourceCodeRetention_NEVER()),
+    /** Store source code files of the last build, delete older artifacts. */
     LAST_BUILD(new CleanupLast(), Messages._SourceCodeRetention_LAST_BUILD()),
+    /** Store source code files for all builds, never delete those files automatically. */
     EVERY_BUILD(new Cleanup(), Messages._SourceCodeRetention_EVERY_BUILD());
 
     private final Cleanup cleanup;
