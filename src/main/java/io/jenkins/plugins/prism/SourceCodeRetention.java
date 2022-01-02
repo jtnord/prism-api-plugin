@@ -17,9 +17,9 @@ import hudson.model.Run;
  */
 public enum SourceCodeRetention {
     /** Never store source code files. */
-    NEVER(new Cleanup(), Messages._SourceCodeRetention_NEVER()),
+    NEVER(new CleanupOldBuilds(), Messages._SourceCodeRetention_NEVER()),
     /** Store source code files of the last build, delete older artifacts. */
-    LAST_BUILD(new CleanupLast(), Messages._SourceCodeRetention_LAST_BUILD()),
+    LAST_BUILD(new CleanupOldBuilds(), Messages._SourceCodeRetention_LAST_BUILD()),
     /** Store source code files for all builds, never delete those files automatically. */
     EVERY_BUILD(new Cleanup(), Messages._SourceCodeRetention_EVERY_BUILD());
 
@@ -55,7 +55,7 @@ public enum SourceCodeRetention {
         }
     }
 
-    static class CleanupLast extends Cleanup {
+    static class CleanupOldBuilds extends Cleanup {
         @Override
         void clean(final Run<?, ?> currentBuild, final String directory, final FilteredLog log) {
             for (Run<?, ?> build = currentBuild.getPreviousCompletedBuild();
