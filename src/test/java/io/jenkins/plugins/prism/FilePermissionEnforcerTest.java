@@ -62,7 +62,7 @@ class FilePermissionEnforcerTest {
         assumeThat(isWindows()).isTrue();
 
         FilePermissionEnforcer validator = new FilePermissionEnforcer();
-        assertThat(validator.isInWorkspace("C:\\workspace\b.c", WORKSPACE_WINDOWS, "C:\\a")).isTrue();
+        assertThat(validator.isInWorkspace("C:\\workspace\\b.c", WORKSPACE_WINDOWS, "C:\\a")).isTrue();
         assertThat(validator.isInWorkspace("C:\\a\\workspace\\b.c", WORKSPACE_WINDOWS, "C:\\b")).isFalse();
         assertThat(validator.isInWorkspace("b.c", WORKSPACE_WINDOWS, "C:\\a")).isFalse();
     }
