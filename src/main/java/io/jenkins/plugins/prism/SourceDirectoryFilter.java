@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 
 import hudson.FilePath;
@@ -29,12 +30,15 @@ public class SourceDirectoryFilter {
      *         the approved source directories from the system configuration section
      * @param requestedSourceDirectories
      *         source directories either as a relative path in the agent workspace or as an absolute path on the agent
+     * @param log
+     *         logger
      *
      * @return the permitted source directories
      */
     public Set<FilePath> getPermittedSourceDirectories(final FilePath workspace,
             final Set<String> allowedSourceDirectories,
-            final Set<String> requestedSourceDirectories) {
+            final Set<String> requestedSourceDirectories,
+            final FilteredLog log) {
         PathUtil pathUtil = new PathUtil();
         Set<FilePath> filteredDirectories = new HashSet<>();
         for (String sourceDirectory : requestedSourceDirectories) {
@@ -43,6 +47,10 @@ public class SourceDirectoryFilter {
                 if (pathUtil.isAbsolute(normalized)) {
                     if (allowedSourceDirectories.contains(normalized)) { // add only registered absolute paths
                         filteredDirectories.add(workspace.child(normalized));
+                    }
+                    else {
+                        log.logError("Removing source directory '%s' - "
+                                + "it has not been approved in Jenkins' global configuration.", normalized);
                     }
                 }
                 else {

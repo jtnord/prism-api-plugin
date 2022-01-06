@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 
 import hudson.FilePath;
@@ -45,10 +46,14 @@ class PrismConfigurationTest {
 
         assertThat(configuration.getSourceDirectories()).isEmpty();
 
-        assertThat(get(configuration, "")).isEmpty();
-        assertThat(get(configuration, "-")).isEmpty();
-        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEmpty();
-        assertThat(get(configuration, RELATIVE)).containsExactly(getWorkspaceChild(RELATIVE));
+        FilteredLog log = new FilteredLog("Error");
+        assertThat(get(configuration, log, "")).isEmpty();
+        assertThat(get(configuration, log, "-")).isEmpty();
+        assertThat(get(configuration, log, RELATIVE)).containsExactly(getWorkspaceChild(RELATIVE));
+        assertThat(log.getErrorMessages()).isEmpty();
+        assertThat(get(configuration, log, ABSOLUTE_NOT_EXISTING)).isEmpty();
+        assertThat(log.getErrorMessages())
+                .anySatisfy(m -> assertThat(m).contains("Removing source directory '/Three'"));
     }
 
     @Test
@@ -61,13 +66,17 @@ class PrismConfigurationTest {
         verify(facade).save();
         assertThat(configuration.getSourceDirectories()).isEqualTo(SOURCE_ROOTS);
 
-        assertThat(get(configuration, "")).isEmpty();
-        assertThat(get(configuration, "-")).isEmpty();
-        assertThat(get(configuration, FIRST)).containsExactly(FIRST);
-        assertThat(get(configuration, RELATIVE)).containsExactly(getWorkspaceChild(RELATIVE));
-        assertThat(get(configuration, RELATIVE, FIRST)).containsExactlyInAnyOrder(FIRST, getWorkspaceChild(RELATIVE));
-        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEmpty();
-        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING, FIRST)).containsExactly(FIRST);
+        FilteredLog log = new FilteredLog("Error");
+        assertThat(get(configuration, log, "")).isEmpty();
+        assertThat(get(configuration, log, "-")).isEmpty();
+        assertThat(get(configuration, log, FIRST)).containsExactly(FIRST);
+        assertThat(get(configuration, log, RELATIVE)).containsExactly(getWorkspaceChild(RELATIVE));
+        assertThat(get(configuration, log, RELATIVE, FIRST)).containsExactlyInAnyOrder(FIRST, getWorkspaceChild(RELATIVE));
+        assertThat(log.getErrorMessages()).isEmpty();
+        assertThat(get(configuration, log, ABSOLUTE_NOT_EXISTING)).isEmpty();
+        assertThat(log.getErrorMessages())
+                .anySatisfy(m -> assertThat(m).contains("Removing source directory '/Three'"));
+        assertThat(get(configuration, log, ABSOLUTE_NOT_EXISTING, FIRST)).containsExactly(FIRST);
 
         configuration.clearRepeatableProperties();
         assertThat(configuration.getSourceDirectories()).isEmpty();
@@ -87,11 +96,13 @@ class PrismConfigurationTest {
         String absoluteWindows = "C:\\absolute\\windows";
         String absoluteWindowsNormalized = "C:/absolute/windows";
 
-        assertThat(get(configuration, relativeUnix)).containsExactly(getWorkspaceChild(relativeUnix));
-        assertThat(get(configuration, relativeWindows)).containsExactly(getWorkspaceChild(relativeWindows));
-        assertThat(get(configuration, absoluteUnix)).containsExactly(absoluteUnix);
-        assertThat(get(configuration, absoluteWindows)).containsExactly(normalize(absoluteWindows));
-        assertThat(get(configuration, absoluteWindowsNormalized)).containsExactly(absoluteWindowsNormalized);
+        FilteredLog log = new FilteredLog("Error");
+        assertThat(get(configuration, log, relativeUnix)).containsExactly(getWorkspaceChild(relativeUnix));
+        assertThat(get(configuration, log, relativeWindows)).containsExactly(getWorkspaceChild(relativeWindows));
+        assertThat(get(configuration, log, absoluteUnix)).containsExactly(absoluteUnix);
+        assertThat(get(configuration, log, absoluteWindows)).containsExactly(normalize(absoluteWindows));
+        assertThat(get(configuration, log, absoluteWindowsNormalized)).containsExactly(absoluteWindowsNormalized);
+        assertThat(log.getErrorMessages()).isEmpty();
     }
 
     @Test
@@ -116,18 +127,23 @@ class PrismConfigurationTest {
         return PATH_UTIL.getAbsolutePath(remote);
     }
 
-    private List<String> get(final PrismConfiguration configuration, final String... absolutePaths) {
+    private List<String> get(final PrismConfiguration configuration, final FilteredLog log,
+            final String... absolutePaths) {
         FilePath path = new FilePath((VirtualChannel) null, NORMALIZED);
         Set<String> sourceDirectories = configuration.getSourceDirectories()
                 .stream()
                 .map(PermittedSourceCodeDirectory::getPath)
                 .map(PATH_UTIL::getAbsolutePath)
                 .collect(Collectors.toSet());
-        return FILTER.getPermittedSourceDirectories(path, sourceDirectories, new HashSet<>(Arrays.asList(absolutePaths)))
+        return FILTER.getPermittedSourceDirectories(path, sourceDirectories, asSet(absolutePaths), log)
                 .stream()
                 .map(FilePath::getRemote)
                 .map(this::normalize)
                 .collect(Collectors.toList());
+    }
+
+    private HashSet<String> asSet(final String... absolutePaths) {
+        return new HashSet<>(Arrays.asList(absolutePaths));
     }
 
     private PrismConfiguration createConfiguration() {
