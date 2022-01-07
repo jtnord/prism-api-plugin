@@ -142,7 +142,7 @@ class PrismConfigurationTest {
                 .collect(Collectors.toList());
     }
 
-    private HashSet<String> asSet(final String... absolutePaths) {
+    private Set<String> asSet(final String... absolutePaths) {
         return new HashSet<>(Arrays.asList(absolutePaths));
     }
 
