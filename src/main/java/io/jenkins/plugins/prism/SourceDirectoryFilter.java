@@ -8,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 
-import hudson.FilePath;
-
 /**
  * Filters source code directories that are not approved in Jenkins' global configuration. A directory is considered
  * safe if it is a sub-folder in the agent workspace. Directories outside the workspace need to be approved by an
@@ -24,8 +22,8 @@ public class SourceDirectoryFilter {
      * will be returned. Permitted source directories are absolute paths that have been registered using {@link
      * PrismConfiguration#setSourceDirectories(java.util.List)} or relative paths in the workspace.
      *
-     * @param workspace
-     *         the workspace containing the affected files
+     * @param workspacePath
+     *         the path to the workspace containing the affected files
      * @param allowedSourceDirectories
      *         the approved source directories from the system configuration section
      * @param requestedSourceDirectories
@@ -35,18 +33,18 @@ public class SourceDirectoryFilter {
      *
      * @return the permitted source directories
      */
-    public Set<FilePath> getPermittedSourceDirectories(final FilePath workspace,
+    public Set<String> getPermittedSourceDirectories(final String workspacePath,
             final Set<String> allowedSourceDirectories,
             final Set<String> requestedSourceDirectories,
             final FilteredLog log) {
         PathUtil pathUtil = new PathUtil();
-        Set<FilePath> filteredDirectories = new HashSet<>();
+        Set<String> filteredDirectories = new HashSet<>();
         for (String sourceDirectory : requestedSourceDirectories) {
             if (StringUtils.isNotBlank(sourceDirectory) && !"-".equals(sourceDirectory)) {
                 String normalized = pathUtil.getAbsolutePath(sourceDirectory);
                 if (pathUtil.isAbsolute(normalized)) {
                     if (allowedSourceDirectories.contains(normalized)) { // add only registered absolute paths
-                        filteredDirectories.add(workspace.child(normalized));
+                        filteredDirectories.add(normalized);
                     }
                     else {
                         log.logError("Removing source directory '%s' - "
@@ -54,7 +52,7 @@ public class SourceDirectoryFilter {
                     }
                 }
                 else {
-                    filteredDirectories.add(workspace.child(normalized)); // relative workspace paths are always ok
+                    filteredDirectories.add(pathUtil.createAbsolutePath(workspacePath, normalized)); // relative workspace paths are always ok
                 }
             }
         }

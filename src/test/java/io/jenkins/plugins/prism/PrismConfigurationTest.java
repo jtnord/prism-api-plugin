@@ -135,9 +135,8 @@ class PrismConfigurationTest {
                 .map(PermittedSourceCodeDirectory::getPath)
                 .map(PATH_UTIL::getAbsolutePath)
                 .collect(Collectors.toSet());
-        return FILTER.getPermittedSourceDirectories(path, sourceDirectories, asSet(absolutePaths), log)
+        return FILTER.getPermittedSourceDirectories(NORMALIZED, sourceDirectories, asSet(absolutePaths), log)
                 .stream()
-                .map(FilePath::getRemote)
                 .map(this::normalize)
                 .collect(Collectors.toList());
     }
