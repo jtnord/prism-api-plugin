@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.util.FilteredLog;
 import edu.hm.hafner.util.PathUtil;
 
-import hudson.FilePath;
-import hudson.remoting.VirtualChannel;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
@@ -129,7 +127,6 @@ class PrismConfigurationTest {
 
     private List<String> get(final PrismConfiguration configuration, final FilteredLog log,
             final String... absolutePaths) {
-        FilePath path = new FilePath((VirtualChannel) null, NORMALIZED);
         Set<String> sourceDirectories = configuration.getSourceDirectories()
                 .stream()
                 .map(PermittedSourceCodeDirectory::getPath)
