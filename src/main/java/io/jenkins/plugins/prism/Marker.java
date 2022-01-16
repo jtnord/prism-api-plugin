@@ -3,13 +3,13 @@ package io.jenkins.plugins.prism;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * An annotation for a specific line range in the source code. A range is given by the first and last line and may
- * contain column information as well.
+ * Marks a line, some characters in a line, or a multi-line block in the source code. A marker can optionally be
+ * enriched with a message, description, and icon.
  *
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.DataClass")
-public class Annotation {
+public class Marker {
     private final String title;
     private final String icon;
     private final String description;
@@ -19,7 +19,7 @@ public class Annotation {
     private final int columnStart;
     private final int columnEnd;
 
-    Annotation(final String title, final String icon, final String description,
+    Marker(final String title, final String icon, final String description,
             final int lineStart, final int lineEnd, final int columnStart, final int columnEnd) {
         this.title = title;
         this.icon = icon;
@@ -59,12 +59,12 @@ public class Annotation {
     }
 
     /**
-     * Creates instances of {@link Annotation annotations} using the builder pattern.
+     * Creates {@link Marker markers} using the builder pattern.
      *
      * @author Ullrich Hafner
      */
     @SuppressWarnings({"ParameterHidesMemberVariable", "checkstyle:HiddenField"})
-    public static class AnnotationBuilder {
+    public static class MarkerBuilder {
         private String title = StringUtils.EMPTY;
         private String icon = StringUtils.EMPTY;
         private String description = StringUtils.EMPTY;
@@ -74,102 +74,102 @@ public class Annotation {
         private int columnEnd;
 
         /**
-         * Defines the title of the annotation card. This title must not contain HTML tags.
+         * Defines the title of the marker. This title must not contain HTML tags.
          *
          * @param title
          *         the title, should fit into a single line
          *
          * @return this builder
          */
-        public AnnotationBuilder withTitle(final String title) {
+        public MarkerBuilder withTitle(final String title) {
             this.title = title;
             return this;
         }
 
         /**
-         * Defines the icon of the annotation card.
+         * Defines the icon of the marker.
          *
          * @param icon
          *         the icon (if available use an SVG icon)
          *
          * @return this builder
          */
-        public AnnotationBuilder withIcon(final String icon) {
+        public MarkerBuilder withIcon(final String icon) {
             this.icon = icon;
             return this;
         }
 
         /**
-         * Defines the title of the annotation card.
+         * Defines the title of the marker.
          *
          * @param description
-         *         the detailed description of the annotation. This description may contain valid HTML elements.
+         *         the detailed description of the maker. This description may contain valid HTML elements.
          *
          * @return this builder
          */
-        public AnnotationBuilder withDescription(final String description) {
+        public MarkerBuilder withDescription(final String description) {
             this.description = description;
             return this;
         }
 
         /**
-         * Returns the first line of this issue (lines start at 1; 0 indicates the whole file).
+         * Defines the first line of this marker (lines start at 1; 0 indicates the whole file).
          *
          * @param lineStart
          *         the first line
          *
          * @return this builder
          */
-        public AnnotationBuilder withLineStart(final int lineStart) {
+        public MarkerBuilder withLineStart(final int lineStart) {
             this.lineStart = lineStart;
             return this;
         }
 
         /**
-         * Returns the last line of this issue (lines start at 1).
+         * Defines the last line of this marker (lines start at 1).
          *
          * @param lineEnd
          *         the last line
          *
          * @return this builder
          */
-        public AnnotationBuilder withLineEnd(final int lineEnd) {
+        public MarkerBuilder withLineEnd(final int lineEnd) {
             this.lineEnd = lineEnd;
             return this;
         }
 
         /**
-         * Returns the first column of this issue (columns start at 1, 0 indicates the whole line).
+         * Defines the first column of this marker (columns start at 1, 0 indicates the whole line).
          *
          * @param columnStart
          *         the first column
          *
          * @return this builder
          */
-        public AnnotationBuilder withColumnStart(final int columnStart) {
+        public MarkerBuilder withColumnStart(final int columnStart) {
             this.columnStart = columnStart;
             return this;
         }
 
         /**
-         * Returns the last column of this issue (columns start at 1).
+         * Defines the last column of this marker (columns start at 1).
          *
          * @param columnEnd
          *         the last column
          *
          * @return this builder
          */
-        public AnnotationBuilder withColumnEnd(final int columnEnd) {
+        public MarkerBuilder withColumnEnd(final int columnEnd) {
             this.columnEnd = columnEnd;
             return this;
         }
 
         /**
-         * Creates an immutable {@link Annotation} instance using the configured properties.
+         * Creates an immutable {@link Marker} instance using the configured properties.
          *
          * @return the new annotation
          */
-        public Annotation build() {
+        public Marker build() {
             int providedLineStart = defaultInteger(lineStart);
             int providedLineEnd = defaultInteger(lineEnd) == 0 ? providedLineStart : defaultInteger(lineEnd);
             if (providedLineStart == 0) {
@@ -192,7 +192,7 @@ public class Annotation {
                 this.columnEnd = Math.max(providedColumnStart, providedColumnEnd);
             }
 
-            return new Annotation(title, icon, description, lineStart, lineEnd, columnStart, columnEnd);
+            return new Marker(title, icon, description, lineStart, lineEnd, columnStart, columnEnd);
         }
 
         /**

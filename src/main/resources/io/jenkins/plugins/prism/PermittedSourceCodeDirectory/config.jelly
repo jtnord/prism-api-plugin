@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:c="/controls" >
+
+  <f:entry title="${%Absolute path of permitted directory}" field="path">
+    <c:safe-textbox/>
+  </f:entry>
+
+</j:jelly>
