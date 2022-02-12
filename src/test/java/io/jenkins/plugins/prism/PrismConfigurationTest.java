@@ -55,6 +55,18 @@ class PrismConfigurationTest {
     }
 
     @Test
+    void shouldNotFilterRelativePaths() {
+        SourceDirectoryFilter filter = new SourceDirectoryFilter();
+        Set<String> requested = new HashSet<>();
+        String relative = "src/main/java";
+        requested.add(relative);
+
+        Set<String> allowedDirectories = filter.getPermittedSourceDirectories(NORMALIZED, new HashSet<>(),
+                requested, new FilteredLog("Error"));
+        assertThat(allowedDirectories).contains(NORMALIZED + "/" + relative);
+    }
+
+    @Test
     void shouldSaveConfigurationIfFoldersAreAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
         PrismConfiguration configuration = new PrismConfiguration(facade, mock(JenkinsFacade.class));
