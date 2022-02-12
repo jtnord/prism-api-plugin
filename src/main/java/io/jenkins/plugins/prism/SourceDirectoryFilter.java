@@ -19,8 +19,8 @@ import edu.hm.hafner.util.PathUtil;
 public class SourceDirectoryFilter {
     /**
      * Filters the specified collection of additional source code directories so that only permitted source directories
-     * will be returned. Permitted source directories are absolute paths that have been registered using {@link
-     * PrismConfiguration#setSourceDirectories(java.util.List)} or relative paths in the workspace.
+     * will be returned. Permitted source directories are absolute paths that have been registered using
+     * {@link PrismConfiguration#setSourceDirectories(java.util.List)} or relative paths in the workspace.
      *
      * @param workspacePath
      *         the path to the workspace containing the affected files
@@ -40,9 +40,10 @@ public class SourceDirectoryFilter {
         PathUtil pathUtil = new PathUtil();
         Set<String> filteredDirectories = new HashSet<>();
         for (String sourceDirectory : requestedSourceDirectories) {
-            if (StringUtils.isNotBlank(sourceDirectory) && !"-".equals(sourceDirectory)) {
-                String normalized = pathUtil.getAbsolutePath(sourceDirectory);
-                if (pathUtil.isAbsolute(normalized)) {
+            if (StringUtils.isNotBlank(sourceDirectory)
+                    && !"-".equals(sourceDirectory)) {
+                if (pathUtil.isAbsolute(sourceDirectory)) {
+                    String normalized = pathUtil.getAbsolutePath(sourceDirectory);
                     if (allowedSourceDirectories.contains(normalized)) { // add only registered absolute paths
                         filteredDirectories.add(normalized);
                     }
@@ -52,7 +53,7 @@ public class SourceDirectoryFilter {
                     }
                 }
                 else {
-                    filteredDirectories.add(pathUtil.createAbsolutePath(workspacePath, normalized)); // relative workspace paths are always ok
+                    filteredDirectories.add(pathUtil.createAbsolutePath(workspacePath, sourceDirectory)); // relative workspace paths are always ok
                 }
             }
         }
