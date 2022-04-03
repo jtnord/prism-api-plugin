@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+
+<div>
+  Provides <a href="https://prismjs.com/">Prism</a> for Jenkins Plugins. Prism is a lightweight, extensible syntax
+  highlighter, built with modern web standards in mind. It’s used in millions of websites, including some of those you
+  visit daily.
+</div>
