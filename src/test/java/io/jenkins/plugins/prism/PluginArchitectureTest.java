@@ -1,5 +1,6 @@
 package io.jenkins.plugins.prism;
 
+import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -7,11 +8,6 @@ import com.tngtech.archunit.lang.ArchRule;
 import edu.hm.hafner.util.ArchitectureRules;
 
 import io.jenkins.plugins.util.PluginArchitectureRules;
-
-import static com.tngtech.archunit.base.DescribedPredicate.*;
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.*;
-import static com.tngtech.archunit.lang.conditions.ArchPredicates.*;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 
 /**
  * Defines several architecture rules for the static analysis model and parsers.
@@ -22,6 +18,15 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 @AnalyzeClasses(packages = "io.jenkins.plugins.prism")
 class PluginArchitectureTest {
     @ArchTest
+    static final ArchRule NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR = ArchitectureRules.NO_EXCEPTIONS_WITH_NO_ARG_CONSTRUCTOR;
+
+    @ArchTest
+    static final ArchRule NO_PUBLIC_TEST_CLASSES = ArchitectureRules.NO_PUBLIC_TEST_CLASSES;
+
+    @ArchTest
+    static final ArchRule NO_PUBLIC_TEST_METHODS = ArchitectureRules.ONLY_PACKAGE_PRIVATE_TEST_METHODS;
+
+    @ArchTest
     static final ArchRule NO_TEST_API_CALLED = ArchitectureRules.NO_TEST_API_CALLED;
 
     @ArchTest
@@ -31,10 +36,10 @@ class PluginArchitectureTest {
     static final ArchRule NO_FORBIDDEN_CLASSES_CALLED = ArchitectureRules.NO_FORBIDDEN_CLASSES_CALLED;
 
     @ArchTest
-    static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
+    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = ArchitectureRules.NO_PUBLIC_ARCHITECTURE_TESTS;
 
     @ArchTest
-    static final ArchRule NO_PUBLIC_TEST_CLASSES = PluginArchitectureRules.NO_PUBLIC_TEST_CLASSES;
+    static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
 
     @ArchTest
     static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED = PluginArchitectureRules.NO_FORBIDDEN_PACKAGE_ACCESSED;
@@ -52,13 +57,5 @@ class PluginArchitectureTest {
     static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
 
     @ArchTest
-    static final ArchRule USE_POST_FOR_LIST_AND_COMBOBOX_FILL = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
-
-    /** Test classes should not use Junit 4. */
-    @ArchTest
-    static final ArchRule NO_JUNIT_4 =
-            noClasses().that(doNot(
-                    have(simpleNameEndingWith("ITest"))
-                            .or(have(simpleNameStartingWith("Integration")))))
-                    .should().dependOnClassesThat().resideInAnyPackage("org.junit");
+    static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
 }

@@ -2,13 +2,11 @@ package io.jenkins.plugins.prism;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import io.jenkins.plugins.casc.misc.ConfiguredWithCode;
-import io.jenkins.plugins.casc.misc.JenkinsConfiguredWithCodeRule;
+import io.jenkins.plugins.casc.ConfigurationAsCode;
+import io.jenkins.plugins.casc.ConfiguratorException;
+import io.jenkins.plugins.util.IntegrationTestWithJenkinsPerTest;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -17,27 +15,34 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class ConfigurationAsCodeITest {
-    /** Jenkins SUT. */
-    @Rule @SuppressFBWarnings("URF")
-    public JenkinsConfiguredWithCodeRule jenkins = new JenkinsConfiguredWithCodeRule();
-
+class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Reads a YAML file with permitted source code directories and verifies that the directories have been loaded.
      */
-    @Test @ConfiguredWithCode("sourceDirectories.yaml")
-    public void shouldImportSourceDirectoriesFromYaml() {
+    @Test
+    void shouldImportSourceDirectoriesFromYaml() {
+        configureJenkins("sourceDirectories.yaml");
+
         List<PermittedSourceCodeDirectory> folders = PrismConfiguration.getInstance().getSourceDirectories();
         assertThat(folders.stream().map(PermittedSourceCodeDirectory::getPath))
                 .hasSize(2)
                 .containsExactlyInAnyOrder("C:\\Windows", "/absolute");
     }
 
-    /**
-     * Reads a YAML file with the active theme.
-     */
-    @Test @ConfiguredWithCode("theme.yaml")
-    public void shouldImportTheme() {
+    /** Reads a YAML file with the active theme. */
+    @Test
+    void shouldImportTheme() {
+        configureJenkins("theme.yaml");
+
         assertThat(PrismConfiguration.getInstance().getTheme()).isEqualTo(PrismTheme.DARK);
+    }
+
+    private void configureJenkins(final String fileName) {
+        try {
+            ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toUri().toString());
+        }
+        catch (ConfiguratorException e) {
+            throw new AssertionError(e);
+        }
     }
 }
