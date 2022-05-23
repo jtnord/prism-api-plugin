@@ -59,5 +59,3 @@ Then you can use Prism in your jelly files using the following snippet:
 Currently, no additional help is available for this plugin. You can have a look into the
 https://github.com/jenkinsci/warnings-ng-plugin[warnings plugin] that
 uses the `SourceCodeViewModel` to render the source code with the selected warning.
-
-
